@@ -30,10 +30,11 @@ export default function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFrameIndex, setSelectedFrameIndex] = useState<number | null>(null);
   const [skyMode, setSkyMode] = useState<SkyMode>('starry-night');
-  const [wallColor, setWallColor] = useState<string>('#1a0f2e');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [skyModeOpen, setSkyModeOpen] = useState(false);
-  const [wallColorOpen, setWallColorOpen] = useState(false);
+  const [musicOpen, setMusicOpen] = useState(false);
+  const [customYouTubeUrl, setCustomYouTubeUrl] = useState('');
+  const [youTubeVideoId, setYouTubeVideoId] = useState('4adZ7AguVcw');
 
   // Load photos from localStorage on mount
   useEffect(() => {
@@ -53,6 +54,52 @@ export default function App() {
       localStorage.setItem('galleryPhotos', JSON.stringify(photos));
     }
   }, [photos]);
+
+  // Load custom YouTube URL from localStorage
+  useEffect(() => {
+    const savedUrl = localStorage.getItem('customYouTubeUrl');
+    if (savedUrl) {
+      const id = extractYouTubeId(savedUrl);
+      if (id) {
+        setCustomYouTubeUrl(savedUrl);
+        setYouTubeVideoId(id);
+      }
+    }
+  }, []);
+
+  // Helper function to extract YouTube video ID
+  const extractYouTubeId = (url: string): string | null => {
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+      /^([a-zA-Z0-9_-]{11})$/  // Direct video ID
+    ];
+    
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match && match[1]) {
+        return match[1];
+      }
+    }
+    return null;
+  };
+
+  // Handle YouTube URL submission
+  const handleYouTubeUrlSubmit = () => {
+    if (!customYouTubeUrl.trim()) {
+      // Reset to default if empty
+      setYouTubeVideoId('4adZ7AguVcw');
+      localStorage.removeItem('customYouTubeUrl');
+      return;
+    }
+
+    const id = extractYouTubeId(customYouTubeUrl);
+    if (id) {
+      setYouTubeVideoId(id);
+      localStorage.setItem('customYouTubeUrl', customYouTubeUrl);
+    } else {
+      alert('Invalid YouTube URL. Please use a valid YouTube link (e.g., https://www.youtube.com/watch?v=...)');
+    }
+  };
 
   const handleFileUploadRequest = (index: number) => {
     setSelectedFrameIndex(index);
@@ -165,7 +212,6 @@ export default function App() {
           onPhotoClick={setSelectedPhoto}
           onUploadRequest={handleFileUploadRequest}
           skyMode={skyMode}
-          wallColor={wallColor}
         />
         
         <OrbitControls
@@ -193,13 +239,13 @@ export default function App() {
           className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg shadow-lg transition-all w-full"
           style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, letterSpacing: '0.5px' }}
         >
-          ⚙️ Gallery Settings {settingsOpen ? '▲' : '▼'}
+          Gallery Settings {settingsOpen ? '▲' : '▼'}
         </button>
 
          {/* Collapsible Settings Panel */}
          {settingsOpen && (
            <div 
-             className="mt-2 bg-black/70 backdrop-blur-sm rounded-xl p-4 shadow-2xl border border-white/20 w-64 max-h-[80vh] overflow-y-auto"
+             className="mt-2 bg-black/80 backdrop-blur-sm rounded-xl p-4 shadow-2xl border border-white/30 w-80 min-h-[400px] max-h-[85vh] overflow-y-auto"
              style={{ fontFamily: "'Cormorant Garamond', serif" }}
            >
            {/* Sky Mode Collapsible Section */}
@@ -213,99 +259,64 @@ export default function App() {
                <span>{skyModeOpen ? '▲' : '▼'}</span>
              </button>
              
-             {skyModeOpen && (
-               <div className="mt-2">
-                 <select
-                   value={skyMode}
-                   onChange={(e) => setSkyMode(e.target.value as SkyMode)}
-                   className="w-full bg-black/50 text-white border border-white/30 rounded-lg px-3 py-2 focus:outline-none focus:border-white/50 cursor-pointer"
-                   style={{ 
-                     fontWeight: 400, 
-                     letterSpacing: '0.5px',
-                     colorScheme: 'dark'
-                   }}
-                 >
-                   <option value="starry-night" style={{ backgroundColor: 'rgba(0, 0, 0, 0.9)', color: 'white' }}>⭐ Starry Night</option>
-                   <option value="snow" style={{ backgroundColor: 'rgba(0, 0, 0, 0.9)', color: 'white' }}>❄️ Snow</option>
-                   <option value="shooting-stars" style={{ backgroundColor: 'rgba(0, 0, 0, 0.9)', color: 'white' }}>💫 Shooting Stars</option>
-                 </select>
-               </div>
-             )}
+            {skyModeOpen && (
+              <div className="mt-2">
+               <select
+                 value={skyMode}
+                 onChange={(e) => setSkyMode(e.target.value as SkyMode)}
+                 className="w-full bg-black/50 text-white border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-white/50 cursor-pointer"
+                 style={{ 
+                   fontWeight: 400, 
+                   letterSpacing: '0.5px',
+                   colorScheme: 'dark'
+                 }}
+               >
+                 <option value="starry-night" style={{ backgroundColor: 'rgba(0, 0, 0, 0.9)', color: 'white' }}>Starry Night</option>
+                 <option value="snow" style={{ backgroundColor: 'rgba(0, 0, 0, 0.9)', color: 'white' }}>Snow</option>
+                 <option value="shooting-stars" style={{ backgroundColor: 'rgba(0, 0, 0, 0.9)', color: 'white' }}>Shooting Stars</option>
+               </select>
+              </div>
+            )}
            </div>
 
-           {/* Wall Color Collapsible Section */}
-           <div>
-             <button
-               onClick={() => setWallColorOpen(!wallColorOpen)}
-               className="w-full flex items-center justify-between text-white text-sm font-medium py-2 px-3 rounded-lg bg-white/10 hover:bg-white/20 transition-all"
-               style={{ letterSpacing: '0.5px' }}
-             >
-               <span>Wall Color</span>
-               <span>{wallColorOpen ? '▲' : '▼'}</span>
-             </button>
-             
-             {wallColorOpen && (
-               <div className="grid grid-cols-4 gap-2 mt-2 px-1">
-              <button
-                onClick={() => setWallColor('#1a0f2e')}
-                className={`w-12 h-12 rounded-lg border-2 transition-all ${
-                  wallColor === '#1a0f2e' ? 'border-white scale-110 shadow-lg shadow-purple-500' : 'border-white/30 hover:border-white/60'
-                }`}
-                style={{ backgroundColor: '#1a0f2e' }}
-                title="Deep Purple"
-              />
-              <button
-                onClick={() => setWallColor('#2a2a2a')}
-                className={`w-12 h-12 rounded-lg border-2 transition-all ${
-                  wallColor === '#2a2a2a' ? 'border-white scale-110 shadow-lg shadow-purple-500' : 'border-white/30 hover:border-white/60'
-                }`}
-                style={{ backgroundColor: '#2a2a2a' }}
-                title="Charcoal Gray"
-              />
-              <button
-                onClick={() => setWallColor('#1a1a1a')}
-                className={`w-12 h-12 rounded-lg border-2 transition-all ${
-                  wallColor === '#1a1a1a' ? 'border-white scale-110 shadow-lg shadow-purple-500' : 'border-white/30 hover:border-white/60'
-                }`}
-                style={{ backgroundColor: '#1a1a1a' }}
-                title="Black"
-              />
-              <button
-                onClick={() => setWallColor('#0f1a2e')}
-                className={`w-12 h-12 rounded-lg border-2 transition-all ${
-                  wallColor === '#0f1a2e' ? 'border-white scale-110 shadow-lg shadow-purple-500' : 'border-white/30 hover:border-white/60'
-                }`}
-                style={{ backgroundColor: '#0f1a2e' }}
-                title="Midnight Blue"
-              />
-              <button
-                onClick={() => setWallColor('#2e1a1a')}
-                className={`w-12 h-12 rounded-lg border-2 transition-all ${
-                  wallColor === '#2e1a1a' ? 'border-white scale-110 shadow-lg shadow-purple-500' : 'border-white/30 hover:border-white/60'
-                }`}
-                style={{ backgroundColor: '#2e1a1a' }}
-                title="Dark Burgundy"
-              />
-              <button
-                onClick={() => setWallColor('#1a2e1a')}
-                className={`w-12 h-12 rounded-lg border-2 transition-all ${
-                  wallColor === '#1a2e1a' ? 'border-white scale-110 shadow-lg shadow-purple-500' : 'border-white/30 hover:border-white/60'
-                }`}
-                style={{ backgroundColor: '#1a2e1a' }}
-                title="Dark Forest"
-              />
-               <button
-                 onClick={() => setWallColor('#3a3a3a')}
-                 className={`w-12 h-12 rounded-lg border-2 transition-all ${
-                   wallColor === '#3a3a3a' ? 'border-white scale-110 shadow-lg shadow-purple-500' : 'border-white/30 hover:border-white/60'
-                 }`}
-                 style={{ backgroundColor: '#3a3a3a' }}
-                 title="Warm Gray"
-               />
-             </div>
-             )}
-           </div>
-           </div>
+          {/* Background Music Collapsible Section */}
+          <div>
+            <button
+              onClick={() => setMusicOpen(!musicOpen)}
+              className="w-full flex items-center justify-between text-white text-sm font-medium py-2 px-3 rounded-lg bg-white/10 hover:bg-white/20 transition-all"
+              style={{ letterSpacing: '0.5px' }}
+            >
+              <span>Background Music</span>
+              <span>{musicOpen ? '▲' : '▼'}</span>
+            </button>
+            
+            {musicOpen && (
+              <div className="mt-2">
+                <input
+                  type="text"
+                  value={customYouTubeUrl}
+                  onChange={(e) => setCustomYouTubeUrl(e.target.value)}
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  className="w-full bg-black/50 text-white border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-white/50 mb-2"
+                  style={{ letterSpacing: '0.5px' }}
+                  onKeyDown={(e) => e.key === 'Enter' && handleYouTubeUrlSubmit()}
+                />
+                <button
+                  onClick={handleYouTubeUrlSubmit}
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-sm transition-colors"
+                  style={{ letterSpacing: '0.5px' }}
+                >
+                  Apply
+                </button>
+                {youTubeVideoId !== '4adZ7AguVcw' && (
+                  <p className="text-green-400 text-sm mt-2" style={{ letterSpacing: '0.5px' }}>
+                    ✓ Using custom music
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+          </div>
          )}
        </div>
 
@@ -317,7 +328,7 @@ export default function App() {
         />
       )}
       
-      <BackgroundMusic />
+      <BackgroundMusic videoId={youTubeVideoId} />
     </div>
   );
 }

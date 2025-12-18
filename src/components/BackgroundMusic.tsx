@@ -1,9 +1,18 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
-export function BackgroundMusic() {
+interface BackgroundMusicProps {
+  videoId: string;
+}
+
+export function BackgroundMusic({ videoId }: BackgroundMusicProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.3);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // Reset playing state when video changes
+  useEffect(() => {
+    setIsPlaying(false);
+  }, [videoId]);
 
   const togglePlay = () => {
     if (iframeRef.current) {
@@ -31,14 +40,15 @@ export function BackgroundMusic() {
     <>
       {/* Hidden YouTube iframe for background music */}
       <iframe
+        key={videoId} // Force reload when video changes
         ref={iframeRef}
         style={{ display: 'none' }}
-        src="https://www.youtube.com/embed/4adZ7AguVcw?enablejsapi=1&loop=1&playlist=4adZ7AguVcw"
+        src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1&loop=1&playlist=${videoId}`}
         allow="autoplay; encrypted-media"
       />
 
       {/* Music controls with custom spinning image */}
-      <div className="absolute bottom-4 right-4 flex flex-col items-center gap-1" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+      <div className="absolute bottom-4 right-4 flex items-center gap-2" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
         {/* Custom spinning image - clickable to play/pause */}
         <button
           onClick={togglePlay}
@@ -56,6 +66,7 @@ export function BackgroundMusic() {
           />
         </button>
 
+        {/* Volume slider */}
         <input
           type="range"
           min="0"
@@ -63,7 +74,7 @@ export function BackgroundMusic() {
           step="0.01"
           value={volume}
           onChange={handleVolumeChange}
-          className="w-16 accent-white"
+          className="w-16 accent-purple-500"
           title="Volume"
           style={{ height: '4px' }}
         />

@@ -156,10 +156,9 @@ interface GalleryProps {
   }) => void;
   onUploadRequest: (index: number) => void;
   skyMode: SkyMode;
-  wallColor: string;
 }
 
-export function Gallery({ photos, setPhotos, onPhotoClick, onUploadRequest, skyMode, wallColor }: GalleryProps) {
+export function Gallery({ photos, setPhotos, onPhotoClick, onUploadRequest, skyMode }: GalleryProps) {
   // Initialize photos if empty
   useEffect(() => {
     if (photos.length === 0) {
@@ -193,13 +192,13 @@ export function Gallery({ photos, setPhotos, onPhotoClick, onUploadRequest, skyM
       <FloorText />
       
       {/* Back wall - moved further back */}
-      <Wall position={[0, 2.5, -12.5]} rotation={[0, 0, 0]} width={10} height={5} color={wallColor} />
+      <Wall position={[0, 2.5, -12.5]} rotation={[0, 0, 0]} width={10} height={5} color="#1a0f2e" />
       
       {/* Left wall - extended along z-axis */}
-      <Wall position={[-5, 2.5, -2.5]} rotation={[0, Math.PI / 2, 0]} width={20} height={5} color={wallColor} />
+      <Wall position={[-5, 2.5, -2.5]} rotation={[0, Math.PI / 2, 0]} width={20} height={5} color="#1a0f2e" />
       
       {/* Right wall - extended along z-axis */}
-      <Wall position={[5, 2.5, -2.5]} rotation={[0, -Math.PI / 2, 0]} width={20} height={5} color={wallColor} />
+      <Wall position={[5, 2.5, -2.5]} rotation={[0, -Math.PI / 2, 0]} width={20} height={5} color="#1a0f2e" />
       
       {/* Ceiling lights distributed along the hall */}
       <CeilingLight position={[-4, 4.8, -10]} />
