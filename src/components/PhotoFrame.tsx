@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
 import { CanvasTexture } from 'three';
+import * as THREE from 'three';
 
 interface PhotoFrameProps {
-  imageUrl: string;
+  imageUrl: string | null;
   position: [number, number, number];
   rotation: [number, number, number];
   onClick: () => void;
@@ -13,8 +14,16 @@ export function PhotoFrame({ imageUrl, position, rotation, onClick }: PhotoFrame
   const [hovered, setHovered] = useState(false);
   const [texture, setTexture] = useState<CanvasTexture | null>(null);
   const [dimensions, setDimensions] = useState({ width: 2, height: 1.3 });
+  const [isEmpty, setIsEmpty] = useState(!imageUrl);
   
   useEffect(() => {
+    if (!imageUrl) {
+      setIsEmpty(true);
+      setTexture(null);
+      return;
+    }
+
+    setIsEmpty(false);
     const img = new Image();
     img.crossOrigin = 'anonymous';
     
@@ -64,8 +73,6 @@ export function PhotoFrame({ imageUrl, position, rotation, onClick }: PhotoFrame
     onClick();
   };
   
-  if (!texture) return null;
-  
   // Frame border dimensions (slightly larger than photo)
   const borderWidth = dimensions.width + 0.2;
   const borderHeight = dimensions.height + 0.2;
@@ -82,7 +89,54 @@ export function PhotoFrame({ imageUrl, position, rotation, onClick }: PhotoFrame
         />
       </mesh>
       
-      {/* Photo */}
+      {isEmpty ? (
+        // Empty frame with upload placeholder
+        <>
+          {/* Background */}
+          <mesh
+            onPointerOver={() => setHovered(true)}
+            onPointerOut={() => setHovered(false)}
+            onClick={handleClick}
+            castShadow
+          >
+            <planeGeometry args={[dimensions.width, dimensions.height]} />
+            <meshStandardMaterial 
+              color={hovered ? '#3a3a3a' : '#1a1a1a'}
+              roughness={0.5}
+            />
+          </mesh>
+          
+          {/* Upload icon - simple plus sign */}
+          <mesh position={[0, 0.15, 0.01]}>
+            <planeGeometry args={[0.5, 0.08]} />
+            <meshStandardMaterial 
+              color={hovered ? '#d4af37' : '#666666'}
+              emissive={hovered ? '#d4af37' : '#000000'}
+              emissiveIntensity={0.3}
+            />
+          </mesh>
+          <mesh position={[0, 0.15, 0.01]}>
+            <planeGeometry args={[0.08, 0.5]} />
+            <meshStandardMaterial 
+              color={hovered ? '#d4af37' : '#666666'}
+              emissive={hovered ? '#d4af37' : '#000000'}
+              emissiveIntensity={0.3}
+            />
+          </mesh>
+          
+          {/* Text hint */}
+          <mesh position={[0, -0.3, 0.01]}>
+            <planeGeometry args={[1.2, 0.15]} />
+            <meshStandardMaterial 
+              color={hovered ? '#555555' : '#333333'}
+              transparent
+              opacity={0.8}
+            />
+          </mesh>
+        </>
+      ) : texture ? (
+        // Photo with texture
+        <>
       <mesh
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
@@ -106,6 +160,8 @@ export function PhotoFrame({ imageUrl, position, rotation, onClick }: PhotoFrame
           metalness={0.9}
         />
       </mesh>
+        </>
+      ) : null}
     </group>
   );
 }
