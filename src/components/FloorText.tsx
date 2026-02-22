@@ -1,17 +1,30 @@
-import { useRef, useMemo } from 'react';
+import { useRef } from 'react';
 import { Text } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import * as THREE from 'three';
 
-const messages = [
-  "Welcome to The Blue Memory Hall",
+const defaultMessages = [
+  'Welcome to The Blue Memory Hall',
   "with you, I've found my forever place",
-  "Every moment with you feels like home",
-  "A year of love, gently unfolding.",
-  "365 days since you walked into my world."
+  'Every moment with you feels like home',
+  'A year of love, gently unfolding.',
+  '365 days since you walked into my world.',
 ];
 
-export function FloorText() {
+interface FloorTextProps {
+  messages?: string[];
+  enabled?: boolean;
+  baseTriggerDistance?: number;
+  triggerStep?: number;
+  fadeRange?: number;
+}
+
+export function FloorText({
+  messages = defaultMessages,
+  enabled = true,
+  baseTriggerDistance = 10,
+  triggerStep = 1.5,
+  fadeRange = 2,
+}: FloorTextProps) {
   const { camera } = useThree();
   const textRefs = useRef<Array<any>>([]);
   
@@ -22,11 +35,10 @@ export function FloorText() {
     textRefs.current.forEach((ref, index) => {
       if (ref && ref.material) {
         // Each text appears at different distances
-        const triggerDistance = 10 - (index * 1.5); // Gradually appear as you zoom in
-        const fadeRange = 2;
+        const triggerDistance = baseTriggerDistance - (index * triggerStep); // Gradually appear as you zoom in
         
         let opacity = 0;
-        if (distance < triggerDistance) {
+        if (enabled && distance < triggerDistance) {
           opacity = Math.min(1, (triggerDistance - distance) / fadeRange);
         }
         

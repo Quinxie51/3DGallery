@@ -156,9 +156,16 @@ interface GalleryProps {
   }) => void;
   onUploadRequest: (index: number) => void;
   skyMode: SkyMode;
+  floorPoem: {
+    enabled: boolean;
+    lines: string[];
+    baseTriggerDistance: number;
+    triggerStep: number;
+    fadeRange: number;
+  };
 }
 
-export function Gallery({ photos, setPhotos, onPhotoClick, onUploadRequest, skyMode }: GalleryProps) {
+export function Gallery({ photos, setPhotos, onPhotoClick, onUploadRequest, skyMode, floorPoem }: GalleryProps) {
   // Initialize photos if empty
   useEffect(() => {
     if (photos.length === 0) {
@@ -189,7 +196,13 @@ export function Gallery({ photos, setPhotos, onPhotoClick, onUploadRequest, skyM
     <group>
       <Stars mode={skyMode} />
       <Floor />
-      <FloorText />
+      <FloorText
+        messages={floorPoem.lines}
+        enabled={floorPoem.enabled}
+        baseTriggerDistance={floorPoem.baseTriggerDistance}
+        triggerStep={floorPoem.triggerStep}
+        fadeRange={floorPoem.fadeRange}
+      />
       
       {/* Back wall - moved further back */}
       <Wall position={[0, 2.5, -12.5]} rotation={[0, 0, 0]} width={10} height={5} color="#1a0f2e" />
