@@ -1,11 +1,76 @@
+# 3D Spatial Website Design (3DGallery)
 
-  # 3D Spatial Website Design
+![Thumbnail](./assets/thumbnail.png)
 
-  This is a code bundle for 3D Spatial Website Design. The original project is available at https://www.figma.com/design/WdLAsBjQ5PJbwKpMFup9Bu/3D-Spatial-Website-Design.
+A 3D gallery website built with TypeScript, React and Three.js. This project showcases spatial/3D scenes, interactive viewers, and UI controls for exploring 3D assets and scenes.
 
-  ## Running the code
+Key highlights
+- Interactive 3D scene rendering using Three.js and @react-three/fiber
+- Reusable 3D components and utilities in TypeScript
+- Responsive, accessible UI with Tailwind/modern React patterns
+- Integrations for data or remote asset loading (Supabase or similar)
 
-  Run `npm i` to install the dependencies.
+Tech stack
+- TypeScript
+- React
+- Three.js (@react-three/fiber, @react-three/drei)
+- Tailwind CSS (or similar utility CSS)
+- Optional: Supabase for backend/data storage
+(See package.json for exact dependencies)
 
-  Run `npm run dev` to start the development server.
-  
+Demo / Screenshot
+Place a demo GIF or screenshot into `./assets/` and reference it here, e.g.:
+![Demo Screenshot](./assets/demo-screenshot.png)
+
+Getting started (local development)
+1. Clone the repository
+   git clone https://github.com/Quinxie51/3DGallery.git
+   cd 3DGallery
+
+2. Install dependencies
+   npm install
+   # or
+   yarn install
+   # or pnpm install
+
+3. Run the development server
+   npm run dev
+   # or
+   yarn dev
+   # or pnpm dev
+
+(If your project uses a different script name, update the commands above according to package.json scripts.)
+
+Common scripts
+- npm run dev — start development server
+- npm run build — build production bundle
+- npm run start — start production server (after build)
+Adjust as needed for your setup (Next.js, Vite, etc).
+
+Project structure (example)
+- src/
+  - components/    # reusable React & 3D components
+  - scenes/        # 3D scene definitions and scene graph
+  - hooks/         # custom hooks
+  - styles/        # global styles, tailwind config
+  - assets/        # images, thumbnails, GLTF/GLB models
+- public/ or static/  # static files served by the app
+
+How to add 3D models
+- Place GLTF/GLB files in `assets/models/` and load them using drei/useLoader or <Model/> components.
+- Keep large assets out of the repo if they’re big — use remote storage (Supabase, S3, or rawgit) and stream them.
+
+Thumbnail / Open Graph image
+I added a simple thumbnail at `./assets/thumbnail.svg`. Use it for README, social previews, or Open Graph images.
+
+Contributing
+- Fork -> Branch -> PR
+- Keep commits small and focused
+- Add or update README/documentation for new features
+- Run unit / integration tests (if present) before opening PR
+
+License
+Specify your license (e.g. MIT). If you want, I can add a LICENSE file.
+
+Contact
+If you want me to refine any section, add deployment instructions, or open a PR to add these files, tell me and I’ll proceed.
