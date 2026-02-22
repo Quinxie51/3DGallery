@@ -1,6 +1,7 @@
 # 3D Spatial Website Design (3DGallery)
 
-![Thumbnail](./assets/thumbnail.png)
+<img width="1914" height="935" alt="Screenshot 2026-02-22 162814" src="https://github.com/user-attachments/assets/7c745359-2280-40ca-9c30-a15d2ced2671" />
+
 
 A 3D gallery website built with TypeScript, React and Three.js. This project showcases spatial/3D scenes, interactive viewers, and UI controls for exploring 3D assets and scenes.
 
