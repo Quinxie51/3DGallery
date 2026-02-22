@@ -20,8 +20,6 @@ Tech stack
 (See package.json for exact dependencies)
 
 Demo / Screenshot
-Place a demo GIF or screenshot into `./assets/` and reference it here, e.g.:
-![Demo Screenshot](./assets/demo-screenshot.png)
 
 Getting started (local development)
 1. Clone the repository
@@ -69,9 +67,6 @@ Contributing
 - Keep commits small and focused
 - Add or update README/documentation for new features
 - Run unit / integration tests (if present) before opening PR
-
-License
-Specify your license (e.g. MIT). If you want, I can add a LICENSE file.
 
 Contact
 If you want me to refine any section, add deployment instructions, or open a PR to add these files, tell me and I’ll proceed.
